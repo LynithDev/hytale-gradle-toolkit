@@ -1,5 +1,7 @@
 # Hytale Gradle Toolkit
-Pretty simple Gradle plugin for Hytale modding
+Pretty simple Gradle plugin for Hytale modding. 
+
+Lets you setup and startup a local server with 1 click of a button, thanks to the `:hytale:runServer` task.
 
 ## Usage
 `build.gradle.kts`
