@@ -11,7 +11,7 @@ Pretty simple Gradle plugin for Hytale modding.
 `build.gradle.kts`
 ```kotlin
 plugins {
-    id("dev.lynith.hytale-gradle-toolkit") version "v0.1.1"
+    id("dev.lynith.hytale-gradle-toolkit") version "0.1.1"
 }
 
 hytale {
@@ -62,7 +62,7 @@ pluginManagement {
 `build.gradle.kts`
 ```kotlin
 plugins {
-    id("dev.lynith.hytale-gradle-toolkit") version "v0.1.1"
+    id("dev.lynith.hytale-gradle-toolkit") version "0.1.1"
 }
 
 hytale {
