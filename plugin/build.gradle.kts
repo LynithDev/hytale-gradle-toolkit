@@ -10,10 +10,6 @@ plugins {
 group = "dev.lynith"
 version = "0.1.0"
 
-base {
-    archivesName.set(property("plugin.name").toString())
-}
-
 repositories {
     mavenCentral()
 }
@@ -31,7 +27,7 @@ kotlin {
 
 gradlePlugin {
     plugins {
-        create(property("plugin.name").toString()) {
+        create(project.name.toString()) {
             id = property("plugin.id").toString()
             implementationClass = property("plugin.class").toString()
             version = project.version
@@ -50,12 +46,6 @@ publishing {
                 username = (findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR") ?: System.getenv("USERNAME")) as String?
                 password = (findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN") ?: System.getenv("TOKEN")) as String?
             }
-        }
-    }
-
-    publications {
-        register<MavenPublication>("gpr") {
-            from(components["java"])
         }
     }
 }

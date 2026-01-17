@@ -1,3 +1,5 @@
+rootProject.name = "hytale-gradle-toolkit"
+
 dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
