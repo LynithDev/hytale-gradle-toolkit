@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("dev.lynith.hytale.gradle.toolkit")
+    id("dev.lynith.hytale-gradle-toolkit")
 }
 
 group = "dev.lynith"

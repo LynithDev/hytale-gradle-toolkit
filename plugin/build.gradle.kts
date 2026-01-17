@@ -8,7 +8,11 @@ plugins {
 }
 
 group = "dev.lynith"
-version = "1.0.0"
+version = "0.1.0"
+
+base {
+    archivesName.set(property("plugin.name").toString())
+}
 
 repositories {
     mavenCentral()
