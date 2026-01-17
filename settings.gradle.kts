@@ -1,5 +1,8 @@
 rootProject.name = "hytale-gradle-toolkit"
 
-include(":example")
+if (System.getenv("JITPACK") == null || System.getenv("CI") == null) {
+    include(":example")
+}
+
 includeBuild("plugin")
 
