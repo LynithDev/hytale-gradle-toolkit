@@ -3,6 +3,15 @@ Pretty simple Gradle plugin for Hytale modding.
 
 Lets you setup and startup a local server with 1 click of a button, thanks to the `:hytale:runServer` task.
 
+## Features
+- [x] One-click server startup (requires Hytale to be installed locally)
+- [x] Manifest generation
+- [x] Automatic HytaleServer.jar dependency
+- [ ] Generate sources for better IDE integration
+
+## Examples
+See **[example project](./example)**.
+
 ## Usage
 `build.gradle.kts`
 ```kotlin
