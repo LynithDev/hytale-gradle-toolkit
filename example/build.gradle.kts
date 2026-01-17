@@ -23,4 +23,8 @@ hytale {
 
         author("Someone Else")
     }
+
+    server {
+        jvmArgs.add("")
+    }
 }

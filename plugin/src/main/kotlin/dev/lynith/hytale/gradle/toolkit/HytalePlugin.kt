@@ -61,6 +61,9 @@ class HytalePlugin : Plugin<Project> {
                     }
                 )
             )
+
+            task.jvmArgs.set(config.server.flatMap { it.jvmArgs })
+            task.serverArgs.set(config.server.flatMap { it.serverArgs })
         }
 
         // --- DEPENDENCIES ---

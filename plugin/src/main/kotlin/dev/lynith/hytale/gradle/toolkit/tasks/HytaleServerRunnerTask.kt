@@ -72,15 +72,6 @@ abstract class HytaleServerRunnerTask @Inject constructor() : DefaultTask() {
             val jvmArgs = mutableListOf<String>().apply { addAll(jvmArgs.get()) }
             val serverArgs = mutableListOf<String>().apply { addAll(serverArgs.get()) }
 
-            if (jvmArgs.isEmpty()) {
-                jvmArgs += listOf(
-                    "-Xms4G",
-                    "-Xmx4G",
-                    "-XX:+UseG1GC",
-                    "-XX:+ParallelRefProcEnabled",
-                )
-            }
-
             args.addAll(jvmArgs)
 
             // server jar
@@ -91,19 +82,12 @@ abstract class HytaleServerRunnerTask @Inject constructor() : DefaultTask() {
             args.add("--assets")
             args.add(assetsZip.get().asFile.absolutePath)
 
-            // server args
-            if (serverArgs.isEmpty()) {
-                serverArgs += listOf(
-                    "--allow-op",
-                    "--accept-early-plugins",
-                    "--bind",
-                    "0.0.0.0:5520"
-                )
-            }
-            args.addAll(serverArgs)
-
             // lets not spam their sentry :D
             args.add("--disable-sentry")
+
+            // server args
+            args.addAll(serverArgs)
+
 
             process.args = args
 
