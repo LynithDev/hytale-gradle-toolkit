@@ -1,6 +1,7 @@
 [versions]
 kotlinxSerialization = "1.9.0"
 kotlin = "2.3.0"
+vineflower = "1.11.2"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -8,3 +9,4 @@ kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", vers
 
 [libraries]
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+vineflower = { group = "org.vineflower", name = "vineflower", version.ref = "vineflower"}

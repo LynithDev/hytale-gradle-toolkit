@@ -6,13 +6,19 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.language.jvm.tasks.ProcessResources
 import javax.inject.Inject
 
-abstract class GenerateManifestTask @Inject constructor() : DefaultTask() {
+abstract class GenManifestTask @Inject constructor() : DefaultTask() {
 
     init {
         group = "hytale"
         description = "Generates manifest file"
+
+        project.tasks.withType(ProcessResources::class.java)?.configureEach {
+            it.dependsOn(this)
+            it.from(this)
+        }
     }
 
     @get:Input

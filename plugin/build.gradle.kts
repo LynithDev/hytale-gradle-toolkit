@@ -17,6 +17,7 @@ repositories {
 dependencies {
     compileOnly(gradleApi())
     implementation(libs.kotlinx.serialization)
+    implementation(libs.vineflower)
 }
 
 kotlin {
@@ -37,15 +38,4 @@ gradlePlugin {
     }
 }
 
-publishing {
-    repositories {
-        maven {
-            name = "GithubPackages"
-            url = uri("https://maven.pkg.github.com/${property("publishing.owner")}/${property("publishing.repo")}")
-            credentials {
-                username = (findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR") ?: System.getenv("USERNAME")) as String?
-                password = (findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN") ?: System.getenv("TOKEN")) as String?
-            }
-        }
-    }
-}
+publishing {}
