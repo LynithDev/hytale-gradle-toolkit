@@ -4,7 +4,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputDirectory
@@ -49,7 +48,7 @@ abstract class HytaleServerRunnerTask @Inject constructor() : DefaultTask() {
     }
 
     @get:Inject
-    abstract val processer: ExecOperations
+    abstract val processor: ExecOperations
 
     @TaskAction
     fun run() {
@@ -64,7 +63,7 @@ abstract class HytaleServerRunnerTask @Inject constructor() : DefaultTask() {
         pluginJar.copyTo(modsDir.resolve(pluginJar.name), overwrite = true)
 
         // run the server
-        processer.exec { process ->
+        processor.exec { process ->
             process.workingDir = runDir
 
             process.executable = javaBin.get().asFile.absolutePath
@@ -97,9 +96,6 @@ abstract class HytaleServerRunnerTask @Inject constructor() : DefaultTask() {
                 serverArgs += listOf(
                     "--allow-op",
                     "--accept-early-plugins",
-//                    "--auth-mode",
-//                    "insecure", // todo: replace this with insecure and remove --singleplayer arg
-//                    "--singleplayer",
                     "--bind",
                     "0.0.0.0:5520"
                 )
