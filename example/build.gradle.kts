@@ -1,3 +1,6 @@
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
+
 plugins {
     id("java")
     id("dev.lynith.hytale-gradle-toolkit")

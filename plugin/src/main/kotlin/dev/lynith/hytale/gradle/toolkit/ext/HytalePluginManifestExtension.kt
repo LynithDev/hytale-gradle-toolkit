@@ -3,9 +3,21 @@ package dev.lynith.hytale.gradle.toolkit.ext
 import dev.lynith.hytale.gradle.toolkit.models.HytalePluginAuthor
 import dev.lynith.hytale.gradle.toolkit.utils.PascalCaseNamingStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonEncoder
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -29,6 +41,8 @@ abstract class HytalePluginManifestExtension @Inject constructor(objects: Object
     val optionalDependencies: MapProperty<String, String> = objects.mapProperty(String::class.java, String::class.java)
     val disabledByDefault: Property<Boolean> = objects.property(Boolean::class.java)
 
+    val customEntries: MapProperty<String, JsonElement> = objects.mapProperty(String::class.java, JsonElement::class.java)
+
     fun author(author: String): HytalePluginAuthor = HytalePluginAuthor(author)
     fun author(configure: HytalePluginAuthor.() -> Unit): HytalePluginAuthor {
         val author = HytalePluginAuthor("")
@@ -37,9 +51,18 @@ abstract class HytalePluginManifestExtension @Inject constructor(objects: Object
         authors.add(author)
         return author
     }
+
+    fun entryOf(key: String, value: JsonElement) {
+        customEntries.put(key, value)
+    }
+
+    fun entriesOf(map: Map<String, JsonElement>) {
+        customEntries.putAll(map)
+    }
+
 }
 
-@Serializable
+@Serializable(with = HytalePluginManifestSerializer::class)
 data class HytalePluginManifestConfig(
     @SerialName("main")
     var mainClass: String,
@@ -54,6 +77,8 @@ data class HytalePluginManifestConfig(
     var dependencies: Map<String, String>,
     var optionalDependencies: Map<String, String>,
     var disabledByDefault: Boolean,
+
+    val customEntries: Map<String, JsonElement>
 ) {
 
     @OptIn(ExperimentalSerializationApi::class)
@@ -66,6 +91,41 @@ data class HytalePluginManifestConfig(
 
         return json.encodeToString(this)
     }
+}
+
+class HytalePluginManifestSerializer : KSerializer<HytalePluginManifestConfig> {
+    override val descriptor: SerialDescriptor
+        get() = buildClassSerialDescriptor("HytalePluginManifestConfig") {}
+
+    override fun serialize(encoder: Encoder, value: HytalePluginManifestConfig) {
+        require(encoder is JsonEncoder)
+
+        val base = buildJsonObject {
+            put("Main", JsonPrimitive(value.mainClass))
+            put("Group", JsonPrimitive(value.group))
+            put("Name", JsonPrimitive(value.name))
+            put("Version", JsonPrimitive(value.version))
+            value.description?.let { put("Description", JsonPrimitive(it)) }
+            put("Authors", encoder.json.encodeToJsonElement(ListSerializer(HytalePluginAuthor.serializer()), value.authors))
+            value.website?.let { put("Website", JsonPrimitive(it)) }
+            value.serverVersion?.let { put("ServerVersion", JsonPrimitive(it)) }
+            put("Dependencies", encoder.json.encodeToJsonElement(MapSerializer(String.serializer(), String.serializer()), value.dependencies))
+            put("OptionalDependencies", encoder.json.encodeToJsonElement(MapSerializer(String.serializer(), String.serializer()), value.optionalDependencies))
+            put("DisabledByDefault", JsonPrimitive(value.disabledByDefault))
+
+            // customEntries needs to be flattened
+            value.customEntries.forEach { (k, v) ->
+                put(k, v)
+            }
+        }
+
+        encoder.encodeJsonElement(base)
+    }
+
+    override fun deserialize(decoder: Decoder): HytalePluginManifestConfig {
+        TODO("We don't ever deserialize the manifest so no need to implement this")
+    }
+
 }
 
 fun HytalePluginExtension.resolveManifestConfig(project: Project): Provider<HytalePluginManifestConfig> {
@@ -89,6 +149,7 @@ fun HytalePluginExtension.resolveManifestConfig(project: Project): Provider<Hyta
             dependencies = override.dependencies.getOrElse(emptyMap()),
             optionalDependencies = override.optionalDependencies.getOrElse(emptyMap()),
             disabledByDefault = override.disabledByDefault.getOrElse(false),
+            customEntries = override.customEntries.getOrElse(mapOf())
         )
 
         require(config.name.isNotBlank()) { "manifest name must not be blank" }
